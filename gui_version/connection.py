@@ -5,8 +5,8 @@ from psycopg2 import extensions
 def create_connection() -> (extensions.connection, extensions.cursor):
     """Create connection and cursor to PostgreSQL database"""
     conn = psycopg2.connect(dbname="StockInfo", user="guest",
-                            password="12345678", host="stockdb.cpohzahv2ntk.us-east-2.rds.amazonaws.com",
-                            port="5400")
+                            password="12345678", host="stock2db.cpohzahv2ntk.us-east-2.rds.amazonaws.com",
+                            port="5401")
     conn.autocommit = True
     cur = conn.cursor()
     return conn, cur
