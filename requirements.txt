@@ -1,0 +1,2 @@
+Third-party libraries used in the project: pandas, psycopg2, easygui, openpyxl
+Might have to install numpy since it is a dependency of pandas
