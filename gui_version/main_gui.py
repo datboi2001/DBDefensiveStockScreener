@@ -20,7 +20,7 @@ class StockScreener:
             if dir_path is None:
                 break
             dir_path = Path(dir_path)
-            file_name = self._enter_box("Please choose a file name (If nothing is entered, file name will be result")
+            file_name = self._enter_box("Please choose a file name (If nothing is entered, file name will be result)")
             file_path = create_file_path(file_name, dir_path)
             use_file_path = True
             result = []
