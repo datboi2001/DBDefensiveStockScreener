@@ -1,2 +1,5 @@
-Third-party libraries used in the project: pandas, psycopg2, easygui, openpyxl
-Might have to install numpy since it is a dependency of pandas
+numpy==1.19.0
+pandas==1.1.0
+easygui==0.98.1
+psycopg2==2.8.6
+openpyxl==3.0.5
