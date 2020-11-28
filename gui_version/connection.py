@@ -28,7 +28,7 @@ def create_query(criteria: {str: str}) -> str:
     manipulated_form = sorted(criteria.items())
     for i in list(manipulated_form):
         crit, value = i
-        if crit == "exchange" or value.lower() == "any":
+        if crit == "exchange" or value.lower().strip() == "any":
             manipulated_form.remove(i)
 
     if not manipulated_form:
@@ -36,7 +36,7 @@ def create_query(criteria: {str: str}) -> str:
     for i in range(len(manipulated_form)):
         crit, value = manipulated_form[i]
         if i != len(manipulated_form) - 1:
-            base_query += f"{crit} {value} and "
+            base_query += f"{crit} {value.strip()} and "
         else:
-            base_query += f"{crit} {value};"
+            base_query += f"{crit} {value.strip()};"
     return base_query

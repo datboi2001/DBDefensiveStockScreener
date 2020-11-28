@@ -28,7 +28,7 @@ class StockScreener:
                 fields, values = self._display_criteria()
                 if values is None:
                     break
-                while any(i == "" for i in values) or self.check_op_in_every_value(values):
+                while any(i == "" for i in values) or self.check_follow_guidelines(values):
                     fields, values = self._display_criteria()
                     if values is None:
                         break
@@ -50,12 +50,13 @@ class StockScreener:
                 again = False
         self._display_message("Thank you for using DefensiveStockScreener", "Exit")
 
-    def check_op_in_every_value(self, values: [str]) -> bool:
-        comparison = set(('>', '>=', '<', '<=', '='))
-        if all(text != "US" for text in values):
+    def check_follow_guidelines(self, values: [str]) -> bool:
+        comparison = {'>', '>=', '<', '<=', '='}
+        if values[1].lower().strip() != 'us':
             return True
         for text in values:
-            if text.lower() != "any" and text != "US" and all(op not in text for op in comparison):
+            if text.lower().strip() != "any" and text.lower().strip() != "us" and\
+                    all(op not in text for op in comparison):
                 return True
         return False
 
@@ -67,7 +68,9 @@ class StockScreener:
         ez.msgbox(message, ok_button=ok_button)
 
     def _display_criteria(self) -> ([str], [str]):
-        msg = "Enter your desired criteria (A comparison operator followed by a space followed by a value or Any if you don't want to use the criteria during the filtering.). For 'exchange', enter US for the US market."
+        msg = "Enter your desired criteria (A comparison operator followed by a space followed by a value or Any" \
+              " if you don't want to use the criteria during the filtering.)." \
+              " For 'exchange', enter US for the US market."
         title = "Criteria dashboard"
         fields = sorted(self.criteria.keys())
         return fields, ez.multenterbox(msg, title, fields)
