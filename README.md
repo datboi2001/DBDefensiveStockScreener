@@ -10,4 +10,6 @@ Once that is done, the result will be written to the path you specified and you 
 
 Third-party libraries used in the project: pandas, psycopg2, easygui, openpyxl
 
+A working prototype is available in dist. Its name is run.exe
+
 Written in Python 3.8.1

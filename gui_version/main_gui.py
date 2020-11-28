@@ -8,8 +8,14 @@ from write_result_to_excel import create_file_path, write_to_excel_and_save
 class StockScreener:
     def __init__(self):
         self.conn, self.curr = conn.create_connection()
-        self.criteria = {"pe": "", "ps": "", "pb": "", "rg5y": "",
-                         "current_price/high_price": "", 'roe': "", "exchange": ""}
+        self._gui_criteria = {"Price/Earnings": "", "Price/Sales": "", "Price/Book": "",
+                              "Return On Equity": "", "5-Year Annual Revenue Growth Rate": "",
+                              "Exchange": "", "Current Price/High Price": ""}
+        self._reference = {"Price/Earnings": "pe", "Price/Sales": "ps", "Price/Book": "pb",
+                           "Return On Equity": "roe", "5-Year Annual Revenue Growth Rate": "rg5y",
+                           "Exchange": "exchange", "Current Price/High Price": "current_price/high_price"}
+        self._criteria = {"pe": "", "ps": "", "pb": "", "rg5y": "",
+                          "current_price/high_price": "", 'roe': "", "exchange": ""}
 
     def start_gui(self):
         again = True
@@ -35,7 +41,7 @@ class StockScreener:
                 if values is None:
                     break
                 self._add_values_to_criteria(fields, values)
-                query = conn.create_query(self.criteria)
+                query = conn.create_query(self._criteria)
                 result = conn.execute_query(self.curr, query)
                 if result:
                     use_file_path = False
@@ -52,17 +58,20 @@ class StockScreener:
 
     def check_follow_guidelines(self, values: [str]) -> bool:
         comparison = {'>', '>=', '<', '<=', '='}
-        if values[1].lower().strip() != 'us':
+        if values[2].lower().strip() != 'us':
             return True
         for text in values:
-            if text.lower().strip() != "any" and text.lower().strip() != "us" and\
+            if text.lower().strip() != "any" and text.lower().strip() != "us" and \
                     all(op not in text for op in comparison):
                 return True
         return False
 
     def _add_values_to_criteria(self, fields: [str], values: [str]):
         for crit, value in zip(fields, values):
-            self.criteria[crit] = value
+            self._gui_criteria[crit] = value
+
+        for c, v in self._gui_criteria.items():
+            self._criteria[self._reference[c]] = v
 
     def _display_message(self, message: str, ok_button="Ok"):
         ez.msgbox(message, ok_button=ok_button)
@@ -72,8 +81,9 @@ class StockScreener:
               " if you don't want to use the criteria during the filtering.)." \
               " For 'exchange', enter US for the US market."
         title = "Criteria dashboard"
-        fields = sorted(self.criteria.keys())
-        return fields, ez.multenterbox(msg, title, fields)
+        fields = sorted(self._gui_criteria.keys())
+        values = [">= 10", "<= 0.7", "US", "<= 0.7", "< 10", "< 1", "Any"]
+        return fields, ez.multenterbox(msg, title, fields, values)
 
     def _run_again(self, msg: str) -> bool:
         return ez.ynbox(msg=msg)
