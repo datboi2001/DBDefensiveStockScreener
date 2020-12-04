@@ -1,8 +1,10 @@
 import connection as conn
 import easygui as ez
 import os
+import re
 from pathlib import Path
 from write_result_to_excel import create_file_path, write_to_excel_and_save
+
 
 
 class StockScreener:
@@ -34,7 +36,7 @@ class StockScreener:
                 fields, values = self._display_criteria()
                 if values is None:
                     break
-                while any(i == "" for i in values) or self.check_follow_guidelines(values):
+                while self.check_follow_guidelines(values):
                     fields, values = self._display_criteria()
                     if values is None:
                         break
@@ -57,12 +59,12 @@ class StockScreener:
         self._display_message("Thank you for using DefensiveStockScreener", "Exit")
 
     def check_follow_guidelines(self, values: [str]) -> bool:
-        comparison = {'>', '>=', '<', '<=', '='}
+        pattern = re.compile(r"^(<|<=|>=|>|=) (\d+|\d+\.\d+)$")
         if values[2].lower().strip() != 'us':
             return True
         for text in values:
             if text.lower().strip() != "any" and text.lower().strip() != "us" and \
-                    all(op not in text for op in comparison):
+                    pattern.match(text.strip()) is None:
                 return True
         return False
 
