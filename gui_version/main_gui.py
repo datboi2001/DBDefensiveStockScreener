@@ -21,14 +21,15 @@ class StockScreener:
 
     def start_gui(self):
         again = True
+        self._display_message("Welcome to Defensive Stock Screener, click Next to continue", "Next")
+        dir_path = self._display_directory_chooser()
+        if dir_path is None:
+            again = False
         while again:
-            self._display_message("Welcome to Defensive Stock Screener, click Next to continue", "Next")
-            self._display_message("Please choose where you want to save your results")
-            dir_path = self._directory_chooser()
-            if dir_path is None:
-                break
             dir_path = Path(dir_path)
             file_name = self._enter_box("Please choose a file name (If nothing is entered, file name will be result)")
+            if file_name is None:
+                break
             file_path = create_file_path(file_name, dir_path)
             use_file_path = True
             result = []
@@ -54,6 +55,12 @@ class StockScreener:
                 write_to_excel_and_save(file_path, result)
                 self._display_message(f"Results have been written to {file_path}")
                 again = self._run_again("Do you want to run again?")
+                if again:
+                    answer = self._run_again(f"Do you want to use directory path {dir_path} again?")
+                    if not answer:
+                        dir_path = self._display_directory_chooser()
+                        if dir_path is None:
+                            again = False
             else:
                 again = False
         self._display_message("Thank you for using DefensiveStockScreener", "Exit")
@@ -85,8 +92,12 @@ class StockScreener:
         title = "Criteria dashboard"
         fields = sorted(self._gui_criteria.keys())
         values = [">= 10", "<= 0.7", "US", "<= 0.7", "< 10", "< 1", "Any"]
-        return fields, ez.multenterbox(msg, title, fields, values)
+        return_values = ez.multenterbox(msg, title, fields, values)
+        return fields, return_values
 
+    def _display_directory_chooser(self) -> os.path:
+        self._display_message("Please choose where you want to save your results")
+        return self._directory_chooser()
     def _run_again(self, msg: str) -> bool:
         return ez.ynbox(msg=msg)
 
