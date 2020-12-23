@@ -93,6 +93,7 @@ class StockScreener:
     def _display_directory_chooser(self) -> os.path:
         self._display_message("Please choose where you want to save your results")
         return self._directory_chooser()
+
     def _run_again(self, msg: str) -> bool:
         return ez.ynbox(msg=msg)
 
