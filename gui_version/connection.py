@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2 import extensions
 from credentials import passcode, username, port, dbname, host
 
+
 def create_connection() -> (extensions.connection, extensions.cursor):
     """Create connection and cursor to PostgreSQL database"""
     conn = psycopg2.connect(dbname=dbname, user=username,
