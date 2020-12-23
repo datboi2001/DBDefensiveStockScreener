@@ -6,7 +6,6 @@ from pathlib import Path
 from write_result_to_excel import create_file_path, write_to_excel_and_save
 
 
-
 class StockScreener:
     def __init__(self):
         self.conn, self.curr = conn.create_connection()
@@ -31,46 +30,42 @@ class StockScreener:
             if file_name is None:
                 break
             file_path = create_file_path(file_name, dir_path)
-            use_file_path = True
-            result = []
-            while use_file_path:
+            fields, values = self._display_criteria()
+            if values is None:
+                break
+            while self.check_follow_guidelines(values):
                 fields, values = self._display_criteria()
                 if values is None:
                     break
-                while self.check_follow_guidelines(values):
-                    fields, values = self._display_criteria()
-                    if values is None:
-                        break
-                if values is None:
-                    break
-                self._add_values_to_criteria(fields, values)
-                query = conn.create_query(self._criteria)
-                result = conn.execute_query(self.curr, query)
-                if result:
-                    use_file_path = False
-                else:
-                    self._display_message("Nothing was found")
-                    use_file_path = self._run_again(f"Do you want to use file path {file_path}")
+            if values is None:
+                break
+            self._add_values_to_criteria(fields, values)
+            query = conn.create_query(self._criteria)
+            result = conn.execute_query(self.curr, query)
             if result:
                 write_to_excel_and_save(file_path, result)
                 self._display_message(f"Results have been written to {file_path}")
-                again = self._run_again("Do you want to run again?")
-                if again:
-                    answer = self._run_again(f"Do you want to use directory path {dir_path} again?")
-                    if not answer:
-                        dir_path = self._display_directory_chooser()
-                        if dir_path is None:
-                            again = False
+            else:
+                self._display_message("Nothing was found")
+            again = self._run_again("Do you want to run again?")
+            if again:
+                answer = self._run_again(f"Do you want to use directory path {dir_path} again?")
+                if not answer:
+                    dir_path = self._display_directory_chooser()
+                    if dir_path is None:
+                        again = False
             else:
                 again = False
         self._display_message("Thank you for using DefensiveStockScreener", "Exit")
 
     def check_follow_guidelines(self, values: [str]) -> bool:
         pattern = re.compile(r"^(<|<=|>=|>|=) (\d+|\d+\.\d+)$")
-        if values[2].lower().strip() != 'us':
+        exchange = values[2].lower().strip()
+        supported_exchange = {'us', 'vn'}
+        if exchange not in supported_exchange:
             return True
         for text in values:
-            if text.lower().strip() != "any" and text.lower().strip() != "us" and \
+            if text.lower().strip() != "any" and text.lower().strip() not in supported_exchange and \
                     pattern.match(text.strip()) is None:
                 return True
         return False
