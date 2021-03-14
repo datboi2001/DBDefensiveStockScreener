@@ -13,3 +13,6 @@ Third-party libraries used in the project: pandas, psycopg2, easygui, openpyxl
 Don't try to run run.py cause it does not have all of the dependencies. I left out one for security reason.
 A working prototype is available in dist. Its name is run.exe.
 Written in Python 3.8.1
+
+
+Update: The project has some database issues and won't be available publicly.
