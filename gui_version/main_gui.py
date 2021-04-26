@@ -12,13 +12,14 @@ class StockScreener:
         self._gui_criteria = {"Price/Earnings": "", "Price/Sales": "", "Price/Book": "",
                               "Return On Equity": "", "5-Year Annual Revenue Growth Rate": "",
                               "Exchange": "", "Current Price/High Price": ""}
-        self._reference = {"Price/Earnings": "pe", "Price/Sales": "ps", "Price/Book": "pb",
+        self._criteria_reference = {"Price/Earnings": "pe", "Price/Sales": "ps", "Price/Book": "pb",
                            "Return On Equity": "roe", "5-Year Annual Revenue Growth Rate": "rg5y",
                            "Exchange": "exchange", "Current Price/High Price": "current_price/high_price"}
         self._criteria = {"pe": "", "ps": "", "pb": "", "rg5y": "",
                           "current_price/high_price": "", 'roe': "", "exchange": ""}
 
     def start_gui(self):
+        """Start the program"""
         again = True
         self._display_message("Welcome to Defensive Stock Screener, click Next to continue", "Next")
         dir_path = self._display_directory_chooser()
@@ -33,7 +34,7 @@ class StockScreener:
             fields, values = self._display_criteria()
             if values is None:
                 break
-            while self.check_follow_guidelines(values):
+            while self._check_follow_guidelines(values):
                 fields, values = self._display_criteria()
                 if values is None:
                     break
@@ -58,7 +59,8 @@ class StockScreener:
                 again = False
         self._display_message("Thank you for using DefensiveStockScreener", "Exit")
 
-    def check_follow_guidelines(self, values: [str]) -> bool:
+    def _check_follow_guidelines(self, values: [str]) -> bool:
+        """Check if the values from the users follow a certain guideline."""
         pattern = re.compile(r"^(<|<=|>=|>|=) (\d+|\d+\.\d+)$")
         exchange = values[2].lower().strip()
         supported_exchange = {'us', 'vn'}
@@ -70,14 +72,14 @@ class StockScreener:
                 return True
         return False
 
-    def _add_values_to_criteria(self, fields: [str], values: [str]):
+    def _add_values_to_criteria(self, fields: [str], values: [str]) -> None:
         for crit, value in zip(fields, values):
             self._gui_criteria[crit] = value
 
         for c, v in self._gui_criteria.items():
-            self._criteria[self._reference[c]] = v
+            self._criteria[self._criteria_reference[c]] = v
 
-    def _display_message(self, message: str, ok_button="Ok"):
+    def _display_message(self, message: str, ok_button="Ok") -> None:
         ez.msgbox(message, ok_button=ok_button)
 
     def _display_criteria(self) -> ([str], [str]):

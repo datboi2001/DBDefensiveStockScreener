@@ -14,18 +14,22 @@ def create_connection() -> (extensions.connection, extensions.cursor):
 
 
 def close_connection(conn: extensions.connection, cur: extensions.cursor) -> None:
+    """Close the connection"""
     conn.close()
     cur.close()
 
 
 def execute_query(cur: extensions.cursor, query):
+    """Execute the query gathered from create_query"""
     cur.execute(query)
     result = cur.fetchall()
     return result
 
 
 def create_query(criteria: {str: str}) -> str:
-    base_query = f"select * from \"{criteria['exchange']}\" where "
+    """Build a query with all of the data gathered
+    from the users."""
+    base_query = f"select * from {criteria['exchange']} where "
     manipulated_form = sorted(criteria.items())
     for i in list(manipulated_form):
         crit, value = i

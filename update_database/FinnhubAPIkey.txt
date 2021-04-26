@@ -1,0 +1,1 @@
+# Gather your own API keys from finnhub.io to create database here

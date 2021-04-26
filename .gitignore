@@ -1,0 +1,13 @@
+#Ignore virtual environment
+
+venv
+
+#Ignore certain files in gui_version
+gui_version/build
+gui_version/dist
+.gitignore
+#Ignore certain files in update_database
+
+update_database/run.bat
+update_database/.idea
+update_database/.vscode
