@@ -15,4 +15,4 @@ A working prototype is available in dist. Its name is run.exe.
 Written in Python 3.8.1
 
 
-Update: The project has some database issues and won't be available publicly.
+Update: The project has some database issues so I will post the source code for the entire project
