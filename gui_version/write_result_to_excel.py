@@ -20,24 +20,5 @@ def write_to_excel_and_save(location: Path, u_stocks_data: [(str,)]) -> None:
     today = f"{current.month}/{current.day}/{current.year}"
     columns = ['Ticker', 'Name', 'Exchange', 'Industry', "Company's website", "Market Capitalization",
                'PE', 'PB', 'PS', 'RG5Y', 'ROE', 'Current Price', 'High Price', 'Update Timestamp']
-    for stocks in u_stocks_data:
-        for col, val in zip(columns, stocks):
-            excel_data[col].append(val)
-        # ticker, name, exchange, industry, company_website, market_cap, pe, pb,\
-        # ps, rg5y, current_price, high_price, updated_timestamp, roe = stocks
-        # excel_data[].append(ticker)
-        # excel_data[].append(name)
-        # excel_data[].append(exchange)
-        # excel_data[].append(industry)
-        # excel_data[].append(company_website)
-        # excel_data[].append(market_cap)
-        # excel_data[].append(current_price)
-        # excel_data[].append(high_price)
-        # excel_data[].append(pe)
-        # excel_data[].append(pb)
-        # excel_data[].append(ps)
-        # excel_data[].append(rg5y)
-        # excel_data[].append(roe)
-        # excel_data[].append(updated_timestamp)
-    result_df = DataFrame(excel_data)
+    result_df = DataFrame(u_stocks_data, columns=columns)
     result_df.to_excel(location)

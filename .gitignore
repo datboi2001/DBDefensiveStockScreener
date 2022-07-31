@@ -11,3 +11,4 @@ gui_version/dist
 update_database/run.bat
 update_database/.idea
 update_database/.vscode
+update_database/FinnhubAPIkey.txt

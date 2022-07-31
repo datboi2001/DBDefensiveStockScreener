@@ -1,8 +1,6 @@
-numpy==1.20.0
-pandas==1.2.3
-easygui==0.98.1
-psycopg2==2.8.6
-openpyxl==3.0.5
-xlrd==1.2.0
-finnhub-python==2.3.0
-codetiming==1.2.0
+finnhub_python
+pandas
+psycopg2
+easygui
+codetiming
+openpyxl
