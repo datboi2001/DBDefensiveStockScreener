@@ -8,6 +8,7 @@ from queue import SimpleQueue, Empty
 from typing import Tuple
 from random import choice
 from credentials import username, host, port, dbname, passcode
+
 InsertQueue = SimpleQueue()
 UpdateQueue = SimpleQueue()
 
@@ -143,14 +144,14 @@ def _execute_command(cursor: extensions.cursor, exc: str, stock: Stock, insert=F
         command = f"""DELETE FROM {exc} WHERE ticker = %(symbol)s;"""
     cursor.execute(command, value_dict)
 
-#For testing since it's impossible to debug a program with multiple threads
-#---------------------------------------------------------------------------------------------------------------------
+
+# For testing since it's impossible to debug a program with multiple threads
+# ---------------------------------------------------------------------------------------------------------------------
 
 def insert_stocks_into_db_test(cursor, api_objects, exc) -> None:
     """Make API calls to finnhub and insert the stock in InsertQueue into
     a SQL database. Cursor will handle the job of inserting and committing changes
     to the database."""
-    # cursor, api_object, exc = cursor_api
     while True:
         try:
             stock = InsertQueue.get(block=False)
@@ -160,18 +161,17 @@ def insert_stocks_into_db_test(cursor, api_objects, exc) -> None:
         info = _fixed_delay(api_object.company_profile2, symbol=stock)
         metrics = _fixed_delay(api_object.company_basic_financials, symbol=stock, metric="all")
         price_info = {'c': 0}
-        if exc == 'US':
+        if info != {} or metrics != {}:
             price_info = _fixed_delay(api_object.quote, symbol=stock)
-        new_stock = Stock(symbol=stock)
-        _insert_metrics(new_stock, metrics, price_info, info)
-        _execute_command(cursor, exc, new_stock, insert=True)
-        logging.info(f"Inserted {stock} into database.")
+            new_stock = Stock(symbol=stock)
+            _insert_metrics(new_stock, metrics, price_info, info)
+            _execute_command(cursor, exc, new_stock, insert=True)
+            logging.info(f"Inserted {stock} into database.")
 
 
-def update_stocks_into_db_test(cursor, api_objects, exc) -> None:
+def update_stocks_into_db_test(cursor: extensions.cursor, api_objects: fh.Client, exc: str) -> None:
     """Make API calls to Finnhub and update the stocks in UpdateQueue. Cursor
     will handle the job of updating and committing changes to the databases."""
-    # cursor, api_object, exc = cursor_api
     while True:
         try:
             stock = UpdateQueue.get(block=False)
@@ -188,9 +188,8 @@ def update_stocks_into_db_test(cursor, api_objects, exc) -> None:
         logging.info(f"Updated {stock}.")
 
 
-
 # Threading
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 def insert_stocks_into_db(cursor_api: [extensions.cursor, fh.Client, str]) -> None:
     """Make API calls to finnhub and insert the stock in InsertQueue into
@@ -204,13 +203,12 @@ def insert_stocks_into_db(cursor_api: [extensions.cursor, fh.Client, str]) -> No
             break
         info = _fixed_delay(api_object.company_profile2, symbol=stock)
         metrics = _fixed_delay(api_object.company_basic_financials, symbol=stock, metric="all")
-        price_info = {'c': 0}
-        if exc == 'US':
+        if info != {} or metrics != {}:
             price_info = _fixed_delay(api_object.quote, symbol=stock)
-        new_stock = Stock(symbol=stock)
-        _insert_metrics(new_stock, metrics, price_info, info)
-        _execute_command(cursor, exc, new_stock, insert=True)
-        logging.info(f"Inserted {stock} into database.")
+            new_stock = Stock(symbol=stock)
+            _insert_metrics(new_stock, metrics, price_info, info)
+            _execute_command(cursor, exc, new_stock, insert=True)
+            logging.info(f"Inserted {stock} into database.")
 
 
 def update_stocks_into_db(cursor_api: [extensions.cursor, fh.Client, str]) -> None:
@@ -230,7 +228,9 @@ def update_stocks_into_db(cursor_api: [extensions.cursor, fh.Client, str]) -> No
         _insert_metrics(new_stock, metrics, price_info, {})
         _execute_command(cursor, exc, new_stock, update=True)
         logging.info(f"Updated {stock}.")
-#----------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 def delete_stocks_from_db(cursor: extensions.cursor, delete_stocks: {str}, exc_name: str) -> None:
     """Make API calls to Finnhub and delete any stocks in DeleteQueue from the database.

@@ -28,12 +28,12 @@ def run_program() -> None:
             exc = [exc for _ in range(len(api_objects))]
             workers = list(zip(cursor, api_objects, exc))
             usd.delete_stocks_from_db(cursor[0], delete_stocks, exc[0])
-            with ThreadPoolExecutor(max_workers=len(workers)) as executor:
-                executor.map(usd.insert_stocks_into_db, workers)
-                executor.map(usd.update_stocks_into_db, workers)
+            # with ThreadPoolExecutor(max_workers=len(workers)) as executor:
+            #     executor.map(usd.insert_stocks_into_db, workers)
+            #     executor.map(usd.update_stocks_into_db, workers)
             # For testing
-            # usd.insert_stocks_into_db_test(cursor[0], api_objects, exc[0])
-            # usd.update_stocks_into_db_test(cursor[0], api_objects, exc[0])
+            usd.insert_stocks_into_db_test(cursor[0], api_objects, exc[0])
+            usd.update_stocks_into_db_test(cursor[0], api_objects, exc[0])
     usd.close_connection(connection, cursor)
     timer.stop()
 
